@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Planning Form Demo</title>
+    <!-- Import Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hepta+Slab:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif; /* Fallback for HK Nova */
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Custom scrollbar for modern browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #7549EA;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #AB57ED;
+        }
+
+        /* Form container styling */
+        .form-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Form header styling */
+        .form-header {
+            background: linear-gradient(90deg, #7549EA 0%, #AB57ED 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Hepta Slab', serif;
+        }
+
+        .form-header p {
+            margin: 10px 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            margin: 20px 30px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e4e8eb;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            width: 25%; /* Example progress */
+            background: linear-gradient(90deg, #7549EA 0%, #AB57ED 100%);
+            border-radius: 4px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Form section styling */
+        .form-section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        /* Section title styling */
+        .section-title {
+            color: #000A35;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #7549EA;
+            font-family: 'Hepta Slab', serif;
+        }
+
+        .section-subtitle {
+            color: #000A35;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px;
+        }
+
+        /* Form row and group */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            padding: 0 10px;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        /* Form elements */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #000A35;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #7549EA;
+            box-shadow: 0 0 0 2px rgba(117, 73, 234, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Checkbox and radio styles */
+        .checkbox-container, .radio-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container input, .radio-container input {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .radio-options {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Button styling */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding: 0 30px 30px;
+        }
+
+        button {
+            background: linear-gradient(90deg, #7549EA 0%, #AB57ED 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        button.outline {
+            background: transparent;
+            border: 2px solid #7549EA;
+            color: #7549EA;
+        }
+
+        button.outline:hover {
+            background-color: rgba(117, 73, 234, 0.1);
+        }
+
+        button.secondary {
+            background: linear-gradient(90deg, #00BDD1 0%, #71ECCA 100%);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .form-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .form-group {
+                min-width: 100%;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Business Planning Form</h1>
+            <p>Complete this form to develop your business strategy</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="progress-info">
+                <span>Section 3 of 12</span>
+                <span>25% Complete</span>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Critical Review of Your Business and Behaviors</h2>
+            <div class="form-group">
+                <label for="strengths">What are your strengths?</label>
+                <textarea id="strengths" placeholder="List your business and personal strengths..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="weaknesses">What are your weaknesses?</label>
+                <textarea id="weaknesses" placeholder="List areas that need improvement..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="opportunities">What opportunities do you see?</label>
+                <textarea id="opportunities" placeholder="Describe potential opportunities in your market..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="threats">What threats do you face?</label>
+                <textarea id="threats" placeholder="Describe potential threats to your business..."></textarea>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Lead Generation</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="leadSource1">Lead Source 1</label>
+                    <input type="text" id="leadSource1" placeholder="e.g., Referrals, Online Marketing">
+                </div>
+                <div class="form-group">
+                    <label for="leadGoal1">Monthly Goal</label>
+                    <input type="number" id="leadGoal1" placeholder="Number of leads">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="leadSource2">Lead Source 2</label>
+                    <input type="text" id="leadSource2" placeholder="e.g., Networking, Cold Calling">
+                </div>
+                <div class="form-group">
+                    <label for="leadGoal2">Monthly Goal</label>
+                    <input type="number" id="leadGoal2" placeholder="Number of leads">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="leadSource3">Lead Source 3</label>
+                    <input type="text" id="leadSource3" placeholder="e.g., Social Media, Events">
+                </div>
+                <div class="form-group">
+                    <label for="leadGoal3">Monthly Goal</label>
+                    <input type="number" id="leadGoal3" placeholder="Number of leads">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Outbound Contacts</h2>
+            <div class="form-group">
+                <label for="dailyContacts">How many people will you contact daily?</label>
+                <input type="number" id="dailyContacts" placeholder="Number of contacts">
+            </div>
+            <div class="form-group">
+                <label for="contactStrategy">What is your contact strategy?</label>
+                <textarea id="contactStrategy" placeholder="Describe your approach to contacting potential clients..."></textarea>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="outline">Previous</button>
+            <button>Save & Continue</button>
+            <button class="secondary">Save & Exit</button>
+        </div>
+    </div>
+</body>
+</html>

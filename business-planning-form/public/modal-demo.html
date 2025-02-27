@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modal Form Demo</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .form-container {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(10, 15, 54, 0.1);
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(135deg, #7B68EE 0%, #4ECDC4 100%);
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .form-header img {
+      max-width: 250px;
+      margin-bottom: 20px;
+    }
+    
+    .form-header h1 {
+      color: #0A0F36;
+      margin-bottom: 16px;
+      font-weight: 800;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .form-header h1::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #4ECDC4 0%, #71ECCA 100%);
+      border-radius: 4px;
+    }
+    
+    .form-header p {
+      color: #9E9E9E;
+      max-width: 600px;
+      margin: 0 auto;
+      margin-top: 16px;
+    }
+    
+    .progress-container {
+      margin: 40px 0;
+      padding: 0 20px;
+      position: relative;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background: linear-gradient(90deg, rgba(123, 104, 238, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+      border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .progress {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(135deg, #7B68EE 0%, #4ECDC4 100%);
+      border-radius: 5px;
+      transition: width 0.5s ease-out;
+      box-shadow: 0 1px 3px rgba(123, 104, 238, 0.3);
+    }
+    
+    .section-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      color: #0A0F36;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .section-info span:first-child {
+      position: relative;
+      padding-left: 20px;
+    }
+    
+    .section-info span:first-child::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, #7B68EE 0%, #4ECDC4 100%);
+      border-radius: 50%;
+    }
+    
+    .section-info span:last-child {
+      font-weight: 600;
+      color: #7B68EE;
+    }
+    
+    .section-dots {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding: 0 10px;
+    }
+    
+    .section-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #E7E7E7;
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .section-dot:hover {
+      transform: scale(1.2);
+    }
+    
+    .section-dot.active {
+      background-color: #7B68EE;
+    }
+    
+    .section-dot.completed {
+      background-color: #4ECDC4;
+    }
+    
+    .section-dot::after {
+      content: attr(data-section);
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: #9E9E9E;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    
+    .section-dot.active::after {
+      color: #7B68EE;
+      font-weight: 600;
+    }
+    
+    .form-section {
+      display: none;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(10, 15, 54, 0.1);
+      padding: 32px;
+      margin-bottom: 48px;
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .form-section.active {
+      display: block;
+    }
+    
+    .section-title {
+      color: #0A0F36;
+      border-bottom: none;
+      padding-bottom: 4px;
+      margin-bottom: 24px;
+      font-weight: 800;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, #4ECDC4 0%, #71ECCA 100%);
+      border-radius: 4px;
+    }
+    
+    .section-subtitle {
+      color: #0A0F36;
+      font-weight: 600;
+      margin-bottom: 16px;
+      font-size: 1.3rem;
+    }
+    
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      gap: 16px;
+    }
+    
+    .form-group {
+      flex: 1;
+      margin-bottom: 16px;
+      min-width: 250px;
+    }
+    
+    .label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: #0A0F36;
+    }
+    
+    .input, .textarea, .select {
+      width: 100%;
+      padding: 8px 16px;
+      border: 2px solid #E7E7E7;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: all 0.2s ease-in-out;
+    }
+    
+    .input:focus, .textarea:focus, .select:focus {
+      outline: none;
+      border-color: #4ECDC4;
+      box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+    }
+    
+    .textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .button {
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 10px rgba(123, 104, 238, 0.3);
+      background: linear-gradient(135deg, #7B68EE 0%, #4ECDC4 100%);
+      color: white;
+      border: none;
+    }
+    
+    .button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 104, 238, 0.4);
+    }
+    
+    .button.outline {
+      background-color: transparent;
+      color: #7B68EE;
+      border: 2px solid #0A0F36;
+      box-shadow: none;
+    }
+    
+    .button.outline:hover {
+      background-color: rgba(10, 15, 54, 0.05);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(123, 104, 238, 0.1);
+    }
+    
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .section-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+    }
+    
+    .form-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      text-align: center;
+      color: #9E9E9E;
+      font-size: 0.875rem;
+      border-top: 1px solid #E7E7E7;
+    }
+    
+    .form-footer img {
+      max-width: 120px;
+      margin-bottom: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-container">
+      <div class="form-header">
+        <img src="logos/UMortgage_Logo.png" alt="UMortgage Logo" class="logo">
+        <h1>Business Planning Form</h1>
+        <p>Complete this form to develop your business strategy and share it with your coach.</p>
+        <p style="color: #7B68EE; margin-top: 10px;">Your progress is automatically saved as you fill out the form.</p>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress" id="progress-bar"></div>
+        </div>
+        <div class="section-info">
+          <span>Section <span id="current-section">1</span> of <span id="total-sections">4</span></span>
+          <span><span id="progress-percentage">25</span>% Complete</span>
+        </div>
+        
+        <div class="section-dots" id="section-dots">
+          <div class="section-dot active" data-section="1" onclick="goToSection(1)"></div>
+          <div class="section-dot" data-section="2" onclick="goToSection(2)"></div>
+          <div class="section-dot" data-section="3" onclick="goToSection(3)"></div>
+          <div class="section-dot" data-section="4" onclick="goToSection(4)"></div>
+        </div>
+      </div>
+      
+      <form id="business-planning-form">
+        <!-- Personal Information -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label" for="name">Name</label>
+            <input class="input" id="name" name="name" placeholder="Your full name" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="label" for="date">Date</label>
+            <input class="input" id="date" name="date" type="date" required>
+          </div>
+        </div>
+        
+        <!-- Section 1: Critical Review -->
+        <div class="form-section active" id="section-1">
+          <h2 class="section-title">1. Critical Review of Your Business and Behaviors</h2>
+          
+          <h3 class="section-subtitle">What's working?</h3>
+          <div class="form-group">
+            <label class="label" for="workingItems1">1.</label>
+            <input class="input" id="workingItems1" name="workingItems[0]" placeholder="What's working well in your business?">
+          </div>
+          <div class="form-group">
+            <label class="label" for="workingItems2">2.</label>
+            <input class="input" id="workingItems2" name="workingItems[1]" placeholder="Another thing that's working well">
+          </div>
+          <div class="form-group">
+            <label class="label" for="workingItems3">3.</label>
+            <input class="input" id="workingItems3" name="workingItems[2]" placeholder="One more thing that's working well">
+          </div>
+          
+          <h3 class="section-subtitle">What's not working?</h3>
+          <div class="form-group">
+            <label class="label" for="notWorkingItems1">1.</label>
+            <input class="input" id="notWorkingItems1" name="notWorkingItems[0]" placeholder="What's not working in your business?">
+          </div>
+          <div class="form-group">
+            <label class="label" for="notWorkingItems2">2.</label>
+            <input class="input" id="notWorkingItems2" name="notWorkingItems[1]" placeholder="Another thing that's not working">
+          </div>
+          
+          <div class="section-navigation">
+            <button type="button" class="button outline" disabled>Previous</button>
+            <button type="button" class="button" onclick="goToSection(2)">Next</button>
+          </div>
+        </div>
+        
+        <!-- Section 2: Lead Generation -->
+        <div class="form-section" id="section-2">
+          <h2 class="section-title">2. Lead Generation</h2>
+          
+          <h3 class="section-subtitle">How many leads do you generate?</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label" for="leadsPerDay">Per Day:</label>
+              <input class="input" id="leadsPerDay" name="leadsPerDay" type="number" placeholder="0">
+            </div>
+            
+            <div class="form-group">
+              <label class="label" for="leadsPerWeek">Per Week:</label>
+              <input class="input" id="leadsPerWeek" name="leadsPerWeek" type="number" placeholder="0">
+            </div>
+            
+            <div class="form-group">
+              <label class="label" for="leadsPerMonth">Per Month:</label>
+              <input class="input" id="leadsPerMonth" name="leadsPerMonth" type="number" placeholder="0">
+            </div>
+          </div>
+          
+          <div class="section-navigation">
+            <button type="button" class="button outline" onclick="goToSection(1)">Previous</button>
+            <button type="button" class="button" onclick="goToSection(3)">Next</button>
+          </div>
+        </div>
+        
+        <!-- Section 3: Outbound Contacts -->
+        <div class="form-section" id="section-3">
+          <h2 class="section-title">3. Outbound Contacts</h2>
+          
+          <h3 class="section-subtitle">How many outbound contacts do you make?</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label" for="contactsPerDay">Per Day:</label>
+              <input class="input" id="contactsPerDay" name="contactsPerDay" type="number" placeholder="0">
+            </div>
+            
+            <div class="form-group">
+              <label class="label" for="contactsPerWeek">Per Week:</label>
+              <input class="input" id="contactsPerWeek" name="contactsPerWeek" type="number" placeholder="0">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="label" for="contactChallenges">What challenges do you face in making outbound contacts?</label>
+            <textarea class="textarea" id="contactChallenges" name="contactChallenges" placeholder="Describe the challenges you face"></textarea>
+          </div>
+          
+          <div class="section-navigation">
+            <button type="button" class="button outline" onclick="goToSection(2)">Previous</button>
+            <button type="button" class="button" onclick="goToSection(4)">Next</button>
+          </div>
+        </div>
+        
+        <!-- Section 4: Sales Conversion -->
+        <div class="form-section" id="section-4">
+          <h2 class="section-title">4. Sales Conversion</h2>
+          
+          <div class="form-group">
+            <label class="label" for="conversionRatio">What is your current conversion ratio (leads converted to sales)?</label>
+            <input class="input" id="conversionRatio" name="conversionRatio" placeholder="e.g., 25%">
+          </div>
+          
+          <div class="form-group">
+            <label class="label" for="conversionObstacles">What obstacles do you encounter during the conversion process?</label>
+            <textarea class="textarea" id="conversionObstacles" name="conversionObstacles" placeholder="Describe the obstacles you encounter"></textarea>
+          </div>
+          
+          <div class="section-navigation">
+            <button type="button" class="button outline" onclick="goToSection(3)">Previous</button>
+            <button type="submit" class="button">Submit Form</button>
+          </div>
+        </div>
+      </form>
+      
+      <div class="form-footer">
+        <img src="logos/UMortgage_Bug.png" alt="UMortgage">
+        <p>© 2025 UMortgage Business Planning Form. All information submitted is confidential.</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Variables
+    const totalSections = 4;
+    let currentSection = 1;
+    
+    // DOM Elements
+    const progressBar = document.getElementById('progress-bar');
+    const currentSectionEl = document.getElementById('current-section');
+    const totalSectionsEl = document.getElementById('total-sections');
+    const progressPercentageEl = document.getElementById('progress-percentage');
+    const sectionDots = document.getElementById('section-dots').children;
+    const sections = document.querySelectorAll('.form-section');
+    const form = document.getElementById('business-planning-form');
+    
+    // Initialize
+    updateProgress();
+    
+    // Functions
+    function goToSection(sectionNumber) {
+      if (sectionNumber < 1 || sectionNumber > totalSections) return;
+      
+      // Hide all sections
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Show the selected section
+      document.getElementById(`section-${sectionNumber}`).classList.add('active');
+      
+      // Update current section
+      currentSection = sectionNumber;
+      
+      // Update progress
+      updateProgress();
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+    
+    function updateProgress() {
+      // Update progress bar
+      const progress = (currentSection / totalSections) * 100;
+      progressBar.style.width = `${progress}%`;
+      
+      // Update text
+      currentSectionEl.textContent = currentSection;
+      totalSectionsEl.textContent = totalSections;
+      progressPercentageEl.textContent = Math.round(progress);
+      
+      // Update dots
+      for (let i = 0; i < sectionDots.length; i++) {
+        const dot = sectionDots[i];
+        dot.classList.remove('active', 'completed');
+        
+        if (i + 1 === currentSection) {
+          dot.classList.add('active');
+        } else if (i + 1 < currentSection) {
+          dot.classList.add('completed');
+        }
+      }
+    }
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Form submitted successfully!');
+    });
+  </script>
+</body>
+</html>
