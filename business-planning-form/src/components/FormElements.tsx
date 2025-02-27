@@ -227,16 +227,16 @@ export const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'outli
         `;
       case 'outline':
         return `
-          background-color: transparent;
-          color: ${theme.colors.purple};
-          border: 2px solid ${theme.colors.navy};
-          box-shadow: none;
-          font-weight: ${theme.fontWeights.bold};
+          background-color: ${theme.colors.purple};
+          color: ${theme.colors.white};
+          border: none;
+          box-shadow: ${theme.shadows.button};
+          font-weight: ${theme.fontWeights.extraBold};
           
           &:hover {
-            background-color: rgba(10, 15, 54, 0.05);
+            background-color: ${theme.colors.purpleLight};
             transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(123, 104, 238, 0.1);
+            box-shadow: 0 4px 10px rgba(123, 104, 238, 0.3);
           }
         `;
       default: // primary

@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { BusinessPlanningFormData } from '../types/formTypes';
 import { saveFormData, loadFormData, clearFormData } from '../utils/localStorage';
 import { printForm } from '../utils/printForm';
+import { summarizeFormWithAI } from '../utils/summarizeForm';
 import ProgressIndicator from './ProgressIndicator';
 import ModalFormSection from './ModalFormSection';
 import {
@@ -24,11 +25,15 @@ import {
   SectionSubtitle,
   FormFooter,
 } from './FormElements';
-
 const ModularBusinessPlanningForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<BusinessPlanningFormData>();
   const [currentSection, setCurrentSection] = useState(1);
   const [hasSavedData, setHasSavedData] = useState(false);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [transcript, setTranscript] = useState<string>('');
+  const [showTranscriptInput, setShowTranscriptInput] = useState(false);
   
   // Total number of sections in the form
   const totalSections = 13; // 12 regular sections + implementation items section
@@ -51,14 +56,33 @@ const ModularBusinessPlanningForm: React.FC = () => {
     }
   }, [formValues]);
   
-  const onSubmit: SubmitHandler<BusinessPlanningFormData> = (data) => {
+  const toggleTranscriptInput = () => {
+    setShowTranscriptInput(!showTranscriptInput);
+  };
+  
+  const onSubmit: SubmitHandler<BusinessPlanningFormData> = async (data) => {
     console.log(data);
     // Save the final data
     saveFormData(data);
-    // Show success message
-    alert('Form submitted successfully!');
-    // Print the form
-    printForm(data);
+    
+    // Set submitting state to show loading indicator
+    setIsSubmitting(true);
+    setSummaryError(null);
+    
+    try {
+      // Get AI-generated summary of the business plan with optional transcript
+      const summary = await summarizeFormWithAI(data, transcript || undefined);
+      setAiSummary(summary);
+      
+      // No notifications - intentionally disabled
+    } catch (error) {
+      console.error('Error getting AI summary:', error);
+      setSummaryError(error instanceof Error ? error.message : 'Failed to get AI summary');
+      
+      // No notifications - intentionally disabled
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   // Handle clearing the form data
@@ -70,9 +94,28 @@ const ModularBusinessPlanningForm: React.FC = () => {
     }
   };
 
-  // Handle printing the form
+  // Handle printing the form - generates a file download without opening a new window
   const handlePrintForm = () => {
-    printForm(formValues);
+    const html = printForm(formValues);
+    
+    // Create a blob from the HTML content
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a link element to download the HTML
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `business-plan-${formValues.name || 'unnamed'}.html`;
+    
+    // Append to the body, click, and then remove
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
   };
 
   // Navigation functions
@@ -1268,15 +1311,78 @@ const ModularBusinessPlanningForm: React.FC = () => {
           </table>
         </ModalFormSection>
         
+        {/* Transcript Section */}
+        <div style={{ marginTop: '30px', marginBottom: '20px', textAlign: 'center' }}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={toggleTranscriptInput}
+            style={{ marginBottom: '15px' }}
+          >
+            {showTranscriptInput ? 'Hide Meeting Transcript' : 'Add Meeting Transcript'}
+          </Button>
+          
+          {showTranscriptInput && (
+            <div style={{
+              padding: '20px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '8px',
+              border: '1px solid #e0e0e0',
+              marginBottom: '20px'
+            }}>
+              <h3 style={{ marginBottom: '15px', color: '#0A0F36' }}>Meeting Transcript</h3>
+              <p style={{ marginBottom: '10px', color: '#666' }}>
+                Add your meeting transcript here to enhance the AI analysis. The transcript will be combined with your form data for a more comprehensive business analysis.
+              </p>
+              <TextArea
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+                placeholder="Paste your meeting transcript here..."
+                rows={8}
+                style={{ width: '100%' }}
+              />
+            </div>
+          )}
+        </div>
+
         {/* Form Actions */}
         <ButtonGroup>
-          <Button type="submit" variant="primary">Submit Form</Button>
-          {currentSection < totalSections && (
-            <Button type="button" variant="outline" onClick={handleClearForm}>Clear Form</Button>
-          )}
-          <Button type="button" variant="secondary" onClick={handlePrintForm}>Print Form</Button>
+          <Button type="button" variant="secondary" onClick={handleClearForm} disabled={isSubmitting}>Clear Form</Button>
+          <Button type="button" variant="outline" onClick={handlePrintForm} disabled={isSubmitting}>Print Form</Button>
+          <Button type="submit" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Analyzing...' : 'Submit Form'}
+          </Button>
         </ButtonGroup>
       </form>
+      
+      {/* AI Summary Section */}
+      {isSubmitting && (
+        <div style={{ marginTop: '30px', textAlign: 'center' }}>
+          <h3>Analyzing your business plan with AI...</h3>
+          <div style={{ display: 'inline-block', width: '50px', height: '50px', border: '5px solid #f3f3f3', borderTop: '5px solid #7B68EE', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      )}
+      
+      {aiSummary && !isSubmitting && (
+        <div style={{ marginTop: '40px', padding: '25px', backgroundColor: '#f9f9ff', border: '1px solid #e0e0ff', borderRadius: '12px', boxShadow: '0 4px 8px rgba(0,0,0,0.05)' }}>
+          <h2 style={{ color: '#0A0F36', marginBottom: '20px', borderBottom: '2px solid #7B68EE', paddingBottom: '10px' }}>AI Business Plan Analysis</h2>
+          <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{aiSummary}</div>
+        </div>
+      )}
+      
+      {summaryError && !isSubmitting && (
+        <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#fff1f0', border: '1px solid #ffccc7', borderRadius: '8px' }}>
+          <h3 style={{ color: '#cf1322', marginBottom: '10px' }}>AI Analysis Error</h3>
+          <p>{summaryError}</p>
+          <p>The form was submitted successfully, but we couldn't generate an AI analysis. You can still print your form.</p>
+        </div>
+      )}
       
       <FormFooter>
         <img src={`${process.env.PUBLIC_URL}/logos/UMortgage_Bug.png`} alt="UMortgage" />

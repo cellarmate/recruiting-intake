@@ -9,6 +9,7 @@ A modern, attractive React form application for business planning, created based
 - **Responsive Design**: Works well on desktop and mobile devices
 - **Form Validation**: Uses react-hook-form for efficient form handling and validation
 - **Styled Components**: Utilizes styled-components for consistent styling
+- **Transcript Processor**: AI-powered meeting transcript summarization using OpenAI's API
 
 ## Technologies Used
 
@@ -16,6 +17,7 @@ A modern, attractive React form application for business planning, created based
 - TypeScript
 - Styled Components
 - React Hook Form
+- OpenAI API
 
 ## Getting Started
 
@@ -23,6 +25,7 @@ A modern, attractive React form application for business planning, created based
 
 - Node.js (v14 or later)
 - npm or yarn
+- OpenAI API key (for the transcript processor feature)
 
 ### Installation
 
@@ -31,11 +34,14 @@ A modern, attractive React form application for business planning, created based
    ```
    npm install
    ```
-3. Start the development server:
+3. Configure your OpenAI API key:
+   - Rename `.env` to `.env.local` to ensure it's not committed to version control
+   - Replace `your_api_key_here` with your actual OpenAI API key from [OpenAI's platform](https://platform.openai.com/api-keys)
+4. Start the development server:
    ```
    npm start
    ```
-4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+5. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ## Form Sections
 
@@ -51,6 +57,17 @@ A modern, attractive React form application for business planning, created based
 10. **Goals Recap**
 11. **Define Specific Short Term Goals**
 12. **Vision**
+
+## Transcript Processor
+
+The application includes a feature to process and summarize recruiting meeting transcripts using OpenAI's GPT-4 model. To use this feature:
+
+1. Ensure your OpenAI API key is configured in the `.env.local` file
+2. Navigate to the "Transcript Processor" tab in the application
+3. Paste your meeting transcript into the text area
+4. Click "Generate Summary" to get an AI-generated summary of the meeting
+
+The summary will include key points discussed, candidate qualifications, strengths, potential concerns, and next steps if mentioned.
 
 ## Brand Guidelines
 
